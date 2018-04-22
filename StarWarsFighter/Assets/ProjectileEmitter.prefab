@@ -51,5 +51,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd3c0f21577c237429f66a04f60e9bea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectile: {fileID: 54803474391842102, guid: da03af7c5a8a27542a90fe05d9978b3e,
+  projectile: {fileID: 54428891071929460, guid: 8fe27a2a8d11ac04a8210f37aaccd290,
     type: 2}
