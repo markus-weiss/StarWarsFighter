@@ -298,6 +298,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\CameraMovement.cs" />
     <Compile Include="Assets\FlyController.cs" />
     <Compile Include="Assets\LaserKanon.cs" />
   </ItemGroup>

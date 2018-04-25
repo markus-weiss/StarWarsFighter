@@ -5,83 +5,91 @@ using UnityEngine;
 public class FlyController : MonoBehaviour {
 
 
-    /*
-    float speed = 0;
-    float boost = 0.1f;
-    float speedMax = 1;
-    float speedMin = 0;
+    
+    float force = 0;
+    public float speedMax = 5000;
+    public float boost = 100;
+    float speedMin;
     float RotationSpeed = 2;
-    */
+    public float rollSpeed = 20;
 
-    public float speed = 0;
+    private void Awake()
+    {
+        speedMin = -speedMax;
+    }
+
+    /*
+    public float force = 0;
     public float boost = 1;
     public float speedMax = 50;
     public float speedMin = 0;
     public float RotationSpeed = 2;
+    */
 
+
+    public float cameraSensitivity = 10;
 
     /*
-    public float cameraSensitivity = 90;
     public float climbSpeed = 4;
     public float normalMoveSpeed = 10;
     public float slowMoveFactor = 0.25f;
     public float fastMoveFactor = 3;
 
-
+        */
     private float rotationX = 0.0f;
     private float rotationY = 0.0f;
-    */
+    
     Rigidbody rigidbody;
     private float rotateAroundForward = 0.1f;
+
+
     // Use this for initialization
     void Start () {
         rigidbody = GetComponent<Rigidbody>();
+  
     }
 
 
     // Update is called once per frame
     void Update () {
+
+        rotationX += Input.GetAxis("Mouse X") * cameraSensitivity * Time.deltaTime;
+        rotationY += Input.GetAxis("Mouse Y") * cameraSensitivity * Time.deltaTime;
+        rotationY = Mathf.Clamp(rotationY, -90, 90);
+
+        transform.localRotation *= Quaternion.AngleAxis(rotationX, Vector3.up);
+        transform.localRotation *= Quaternion.AngleAxis(rotationY, Vector3.left);
         
+
+        float axisHor = Input.GetAxis("Horizontal");
+        if (axisHor != 0)
+        {
+            transform.RotateAround(transform.position, transform.forward, -rollSpeed * Time.deltaTime * axisHor);
+        }
+
+
+
         if (Input.GetKey(KeyCode.W))
         {
-            if(speed < speedMax)
-            {
-                speed += boost;
-            }
-            else if (speed > speedMax)
-            {
-                speed = speedMax;
-            }
-            rigidbody.AddForce(transform.forward * speed);
+            force =+ speedMax;
+            Mathf.Min(force, speedMin);
+             
         }
         if (Input.GetKey(KeyCode.S))
         {
-            if (speed > speedMin)
-            {
-                speed -= boost;
-            }
-            else if (speed < speedMin)
-            {
-                speed = speedMin;
-            }
-            rigidbody.AddForce(transform.forward * speed);
-        }
-        Debug.Log(speed);
-
-
-
-        if (Input.GetKey(KeyCode.A))
-        {
-            transform.RotateAround(Vector3.zero, Vector3.forward, 20 * Time.deltaTime);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            transform.RotateAround(Vector3.zero, Vector3.forward, -20 * Time.deltaTime);
+            force = speedMin;
+            Mathf.Min(speedMax, force);
         }
 
+        Debug.Log(force);
 
-        
-        transform.position += Vector3.forward * speed * Time.deltaTime;
+        Vector3 newVelocity = (transform.localRotation * Vector3.forward).normalized * rigidbody.velocity.magnitude;
+
+        rigidbody.velocity = newVelocity;
+        rigidbody.AddForce(transform.forward * force * Time.deltaTime);
+
+
+
 
         //transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(transform.position), Time.fixedDeltaTime * 10);
         //rigidbody.velocity = transform.TransformDirection(Input.GetAxis("Mouse Y"),0,0) * speed;
@@ -112,7 +120,7 @@ public class FlyController : MonoBehaviour {
         rotationY += Input.GetAxis("Mouse Y") * cameraSensitivity * Time.deltaTime;
         rotationY = Mathf.Clamp(rotationY, -90, 90);
 
-        transform.localRotation = Quaternion.AngleAxis(rotationX, Vector3.up);
+        transform.localRotation *= Quaternion.AngleAxis(rotationX, Vector3.up);
         transform.localRotation *= Quaternion.AngleAxis(rotationY, Vector3.left);
 
         if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
